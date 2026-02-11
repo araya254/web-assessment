@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="card">
+<h2>สรุปผล</h2>
+<canvas id="chart"></canvas>
+<button onclick="exportPDF()">Export PDF</button>
+</div>
+
+<script>
+const token=localStorage.getItem("token");
+const id=new URLSearchParams(window.location.search).get("id");
+
+fetch("/summary/"+id,{
+headers:{Authorization:"Bearer "+token}
+})
+.then(res=>res.json())
+.then(data=>{
+new Chart(document.getElementById("chart"),{
+type:"bar",
+data:{
+labels:data.map(d=>d.name),
+datasets:[{
+label:"คะแนนเฉลี่ย",
+data:data.map(d=>d.avg_score)
+}]
+}
+});
+});
+
+function exportPDF(){
+window.open("/export/"+id+"?token="+token);
+}
+</script>
+
+</body>
+</html>

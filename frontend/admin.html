@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+<h2>📊 ระบบอาจารย์</h2>
+<div id="groups"></div>
+</div>
+
+<script>
+const token = localStorage.getItem("token");
+
+fetch("/admin/groups",{
+headers:{Authorization:"Bearer "+token}
+})
+.then(res=>res.json())
+.then(data=>{
+let html="";
+data.forEach(g=>{
+html+=`
+<div class="group-card">
+${g.group_name}
+<a href="summary.html?id=${g.id}">ดูผล</a>
+</div>`;
+});
+document.getElementById("groups").innerHTML=html;
+});
+</script>
+
+</body>
+</html>

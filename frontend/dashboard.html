@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h2>📘 ระบบประเมินเพื่อนกลุ่ม</h2>
+    <button onclick="logout()">ออกจากระบบ</button>
+  </div>
+
+  <div class="card">
+    <h3>กลุ่มโปรเจกต์ของฉัน</h3>
+    <div id="groups"></div>
+    <input type="text" id="group_name" placeholder="ชื่อกลุ่มใหม่">
+    <button onclick="createGroup()">+ สร้างกลุ่มใหม่</button>
+  </div>
+</div>
+
+<script>
+const token = localStorage.getItem("token");
+
+async function loadGroups(){
+const res = await fetch("/my-groups",{
+headers:{Authorization:"Bearer "+token}
+});
+const data = await res.json();
+
+let html="";
+data.forEach(g=>{
+html+=`<div class="group-card">
+${g.group_name}
+<a href="summary.html?id=${g.id}">ดูสรุป</a>
+</div>`;
+});
+document.getElementById("groups").innerHTML=html;
+}
+loadGroups();
+
+async function createGroup(){
+const name=document.getElementById("group_name").value;
+await fetch("/groups",{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+Authorization:"Bearer "+token
+},
+body:JSON.stringify({group_name:name})
+});
+loadGroups();
+}
+
+function logout(){
+localStorage.clear();
+location.href="index.html";
+}
+</script>
+
+</body>
+</html>

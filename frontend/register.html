@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>สมัครสมาชิก</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Prompt',sans-serif;
+}
+
+body{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background: linear-gradient(135deg,#667eea,#764ba2);
+}
+
+.container{
+  width:100%;
+  max-width:450px;
+  padding:40px;
+  border-radius:25px;
+  background:rgba(255,255,255,0.15);
+  backdrop-filter: blur(15px);
+  box-shadow:0 20px 40px rgba(0,0,0,0.2);
+  color:white;
+}
+
+.container h1{
+  text-align:center;
+  margin-bottom:25px;
+}
+
+.input-group{
+  margin-bottom:15px;
+}
+
+.input-group input,
+.input-group select{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:15px;
+  margin-top:5px;
+  outline:none;
+}
+
+.btn{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:25px;
+  background:white;
+  color:#764ba2;
+  font-weight:600;
+  cursor:pointer;
+  margin-top:10px;
+}
+
+.btn:hover{
+  transform:scale(1.03);
+}
+
+.error{
+  margin-top:10px;
+  font-size:14px;
+  text-align:center;
+  color:#ffe6e6;
+}
+
+.link{
+  text-align:center;
+  margin-top:15px;
+}
+
+.link a{
+  color:white;
+  text-decoration:underline;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>สมัครสมาชิก</h1>
+
+  <form id="registerForm">
+
+    <div class="input-group">
+      <label>ชื่อ - นามสกุล</label>
+      <input type="text" id="name" required>
+    </div>
+
+    <div class="input-group">
+      <label>อีเมล</label>
+      <input type="email" id="email" required>
+    </div>
+
+    <div class="input-group">
+      <label>รหัสผ่าน</label>
+      <input type="password" id="password" required>
+    </div>
+
+    <div class="input-group">
+      <label>ยืนยันรหัสผ่าน</label>
+      <input type="password" id="confirmPassword" required>
+    </div>
+
+    <div class="input-group">
+      <label>บทบาท</label>
+      <select id="role" required>
+        <option value="">-- เลือกบทบาท --</option>
+        <option value="student">นักศึกษา</option>
+        <option value="teacher">อาจารย์</option>
+      </select>
+    </div>
+
+    <button type="submit" class="btn">สมัครสมาชิก</button>
+
+    <div class="error" id="errorMsg"></div>
+
+    <div class="link">
+      มีบัญชีแล้ว? <a href="login.html">เข้าสู่ระบบ</a>
+    </div>
+
+  </form>
+</div>
+
+<script>
+document.getElementById("registerForm").addEventListener("submit", async function(e){
+  e.preventDefault();
+
+  const name = document.getElementById("name").value;
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  const confirmPassword = document.getElementById("confirmPassword").value;
+  const role = document.getElementById("role").value;
+  const errorMsg = document.getElementById("errorMsg");
+
+  if(password !== confirmPassword){
+    errorMsg.textContent = "รหัสผ่านไม่ตรงกัน";
+    return;
+  }
+
+  try{
+    const response = await fetch("http://localhost:3000/register",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body: JSON.stringify({name,email,password,role})
+    });
+
+    const data = await response.json();
+
+    if(response.ok){
+      alert("สมัครสมาชิกสำเร็จ!");
+      window.location.href = "login.html";
+    }else{
+      errorMsg.textContent = data.message;
+    }
+
+  }catch(error){
+    errorMsg.textContent = "ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้";
+  }
+});
+</script>
+
+</body>
+</html>
